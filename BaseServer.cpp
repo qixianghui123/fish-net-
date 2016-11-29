@@ -54,15 +54,12 @@ int BaseServer::InitServer()
 								cout << "listen socket error" << endl;
 								return -1;
 				}
-				//while(1)
-				//{
-								struct ev_loop *loop=ev_default_loop(0);
-								struct ev_io socket_accept;
-								ev_io_init(&socket_accept, AcceptCallBack, m_fd, EV_READ);
-								ev_io_start(loop, &socket_accept);
-								ev_run(loop, 0);
-								cout << "accept thread runing" << endl;
-				//}
+				struct ev_loop *loop=ev_default_loop(0);
+				struct ev_io socket_accept;
+				ev_io_init(&socket_accept, AcceptCallBack, m_fd, EV_READ);
+				ev_io_start(loop, &socket_accept);
+				ev_run(loop, 0);
+				cout << "accept thread runing" << endl;
 }
 
 void BaseServer::AcceptCallBack(struct ev_loop* loop, struct ev_io* watcher, int events)//accept callback function
