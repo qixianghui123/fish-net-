@@ -1,18 +1,18 @@
 #ifndef BASE_SOCKET_H_
 #define BASE_SOCKET_H_
-#include<sys/types.h>
-#include<sys/socket.h>
-#include<netinet/in.h>
-#include<arpa/inet.h>
-#include<errno.h>
-#include<unistd.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <errno.h>
+#include <unistd.h>
 
-#include<stdio.h>
-#include<string.h>
-#include<stdlib.h>
-#include<iostream>
-#include<string>
-
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <iostream>
+#include <string>
+#include <time.h>
 #include "ev.h"
 
 using namespace std;
@@ -37,6 +37,7 @@ class BaseSocket
 								int  GetSocketStatus();
 								void CloseSocket();
 								int GetSocket();
+								time_t GetSocketTime();
 								string GetClientKey();
 								static bool SetNonBlock(int &sock);
 
@@ -45,6 +46,7 @@ class BaseSocket
 								int									m_client_fd_status;
 								struct  ev_io*			m_watcher;
 								struct  ev_loop*		m_loop;
+								time_t							m_time;
 
 };
 #endif

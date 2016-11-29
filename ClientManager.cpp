@@ -57,11 +57,17 @@ int ClientManager::GetClients(vector<BaseSocket*> &vctClients)
 				int count=0;
 				m_Mutex.Lock();
 
+				time_t time_now = time(NULL);
 				if( m_mapClient.size() > 0 ) {
 								map<string, BaseSocket*>::iterator it;
 								for(it=m_mapClient.begin(); it!=m_mapClient.end();) {
 												BaseSocket *client = it->second;
-												if( client->GetSocketStatus() == wait_quit ) {
+												if(client->GetSocketTime() - time_now > 10)
+												{
+																delete client;
+																m_mapClient.erase(it++);
+												}
+												else if( client->GetSocketStatus() == wait_quit ) {
 
 																delete client;
 																m_mapClient.erase(it++);

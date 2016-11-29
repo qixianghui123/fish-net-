@@ -95,7 +95,6 @@ void BaseServer::AcceptCallBack(struct ev_loop* loop, struct ev_io* watcher, int
 				if( iClientQueueSize >= 1024 )
 				{
 								cout << "queue is full------------------------------------" << endl;
-								//pClient->doSendAcceptQueueFull();
 								ev_io_stop(loop, clientWatcher);
 								if(pClient)
 								{
@@ -105,7 +104,6 @@ void BaseServer::AcceptCallBack(struct ev_loop* loop, struct ev_io* watcher, int
 				}
 				else
 				{
-								pClient->SetSocketStatus(accept_over);
 								ClientManager::GetInstance()->Insert(pClient);
 				}
 
@@ -120,7 +118,7 @@ void BaseServer::ClientCallBack(struct ev_loop* loop, struct ev_io* watcher, int
 				{
 								return;
 				}       
-				else
+				else if(pClient->GetSocketStatus() == accept_over || pClient->GetSocketStatus() == read_over)
 				{
 								pClient->SetSocketStatus(wait_read);
 				} 		

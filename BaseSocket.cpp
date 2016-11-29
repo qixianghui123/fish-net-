@@ -11,6 +11,7 @@ BaseSocket::BaseSocket(int client_fd, struct ev_io* watcher, struct ev_loop* loo
 				m_client_fd_status = accept_over;
 				m_watcher = watcher;
 				m_loop = loop;
+				m_time = time(NULL);
 }
 
 BaseSocket::~BaseSocket()
@@ -27,6 +28,11 @@ BaseSocket::~BaseSocket()
 int BaseSocket::GetSocket()
 {
 				return m_client_fd;
+}
+
+time_t BaseSocket::GetSocketTime()
+{
+				return m_time;
 }
 
 int BaseSocket::ReadBuf(char *buf, int &len)
