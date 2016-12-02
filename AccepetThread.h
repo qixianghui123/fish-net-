@@ -14,6 +14,7 @@ class AcceptThread:public Thread
 				public:
 								void run()
 								{
+												cout << "accept thread start" << endl;
 												BaseServer server_t;
 												server_t.InitServer();
 								}

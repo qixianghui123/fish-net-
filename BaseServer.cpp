@@ -34,7 +34,7 @@ int BaseServer::Bind()
 
 int BaseServer::Listen()
 {
-				return listen(m_fd, 1024);
+				return listen(m_fd, 10);
 }
 
 int BaseServer::InitServer()
@@ -59,7 +59,7 @@ int BaseServer::InitServer()
 				ev_io_init(&socket_accept, AcceptCallBack, m_fd, EV_READ);
 				ev_io_start(loop, &socket_accept);
 				ev_run(loop, 0);
-				cout << "accept thread runing" << endl;
+				cout << "accept thread finished" << endl;
 }
 
 void BaseServer::AcceptCallBack(struct ev_loop* loop, struct ev_io* watcher, int events)//accept callback function
@@ -72,7 +72,7 @@ void BaseServer::AcceptCallBack(struct ev_loop* loop, struct ev_io* watcher, int
 				bzero(&clientAddr, sizeof(sockaddr_in));
 				socklen_t addrLen = sizeof(sockaddr_in);
 
-				struct ev_io* clientWatcher = new ev_io();
+				struct ev_io* clientWatcher = new struct ev_io();
 				if (NULL==clientWatcher)
 				{
 								return;
@@ -83,26 +83,25 @@ void BaseServer::AcceptCallBack(struct ev_loop* loop, struct ev_io* watcher, int
 								delete clientWatcher;
 								return;
 				}
+				cout << "accept new client is " << clientSock << endl;
 				int nReUse = 1;
-				setsockopt(clientSock, SOL_SOCKET, SO_LINGER, (void *)&nReUse, sizeof(nReUse));
-				BaseSocket::SetNonBlock(clientSock);
-				BaseSocket *pClient = new BaseSocket(clientSock, clientWatcher, loop);
+				//setsockopt(clientSock, SOL_SOCKET, SO_LINGER, (void *)&nReUse, sizeof(nReUse));
+				//BaseSocket::SetNonBlock(clientSock);
+				//BaseSocket *pClient = new BaseSocket(clientSock, clientWatcher, loop);
 
-				int iClientQueueSize = ClientManager::GetInstance()->GetClientQueueSize();
-				if( iClientQueueSize >= 1024 )
-				{
-								cout << "queue is full------------------------------------" << endl;
-								ev_io_stop(loop, clientWatcher);
-								if(pClient)
-								{
-												delete pClient;
-								}
-								return;
-				}
-				else
-				{
-								ClientManager::GetInstance()->Insert(pClient);
-				}
+				//int iClientQueueSize = ClientManager::GetInstance()->GetClientQueueSize();
+				//if( iClientQueueSize >= 1024 )
+				//{
+				//				cout << "queue is full------------------------------------" << endl;
+				//				ev_io_stop(loop, clientWatcher);
+				//				delete clientWatcher;
+				//				return;
+				//}
+				//else
+				//{
+				BaseSocket *pClient = new BaseSocket(clientSock, clientWatcher, loop);
+				ClientManager::GetInstance()->InsertWaitMap(pClient);
+				//}
 
 				ev_io_init(clientWatcher, ClientCallBack, clientSock, EV_READ);
 				ev_io_start(loop, clientWatcher);
@@ -113,10 +112,14 @@ void BaseServer::ClientCallBack(struct ev_loop* loop, struct ev_io* watcher, int
 				BaseSocket *pClient = ClientManager::GetInstance()->FindSocket(watcher->fd);
 				if(NULL == pClient)
 				{
-								return;
+								//close(watcher->fd);
+								//cout << "find socket for read error" << endl;
+								//sleep(2);
+								//exit(1);
 				}       
-				else if(pClient->GetSocketStatus() == accept_over || pClient->GetSocketStatus() == read_over)
+				else
 				{
-								pClient->SetSocketStatus(wait_read);
+								cout << "find socket success\n";
+								ClientManager::GetInstance()->MoveToReadMap(pClient);
 				} 		
 }

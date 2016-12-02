@@ -8,7 +8,7 @@ using namespace std;
 BaseSocket::BaseSocket(int client_fd, struct ev_io* watcher, struct ev_loop* loop)
 {
 				m_client_fd = client_fd;
-				m_client_fd_status = accept_over;
+				m_client_fd_status = new_status;
 				m_watcher = watcher;
 				m_loop = loop;
 				m_time = time(NULL);

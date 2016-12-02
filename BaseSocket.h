@@ -19,11 +19,10 @@ using namespace std;
 
 enum socket_status
 {
-				accept_over,
-				wait_read,
-				read_now,
-				read_over,
-				wait_quit
+				new_status,
+				idle_status,
+				busy_status,
+				destory_status
 };
 
 class BaseSocket
